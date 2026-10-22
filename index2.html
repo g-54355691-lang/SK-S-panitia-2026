@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrumen Penilaian SKPM Kualiti@Sekolah - Standard 3.1</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-active { border-bottom: 3px solid #1d4ed8; color: #1d4ed8; font-weight: 600; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; font-size: 11pt; }
+            .page-break { page-break-after: always; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <header class="bg-indigo-900 text-white shadow-lg no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-700 p-2.5 rounded-xl shadow-inner">
+                    <i class="fa-solid fa-graduation-cap text-2xl text-yellow-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">SKPM Kualiti@Sekolah</h1>
+                    <p class="text-xs text-indigo-200">Standard 3.1: Pengurusan Kurikulum (Modul Penilaian & Rekod)</p>
+                </div>
+            </div>
+            
+            <!-- Navigation Tabs -->
+            <nav class="flex space-x-1 bg-indigo-950/60 p-1.5 rounded-xl text-sm font-medium">
+                <button id="nav-form" onclick="switchTab('form')" class="px-4 py-2 rounded-lg text-white bg-indigo-700 shadow-sm transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i> Borang Penilaian
+                </button>
+                <button id="nav-sheets" onclick="switchTab('sheets')" class="px-4 py-2 rounded-lg text-indigo-200 hover:text-white hover:bg-indigo-800/50 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-table"></i> Lembaran Data (Admin)
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- SECTION 1: BORANG PENILAIAN (PUBLIC FOR INDIVIDUALS) -->
+        <div id="section-form" class="space-y-6">
+            
+            <!-- Intro Card -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                <div class="border-b border-slate-100 pb-4 mb-4">
+                    <span class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">STANDARD 3</span>
+                    <h2 class="text-lg font-bold text-slate-900 mt-2">PENGURUSAN KURIKULUM, KOKURIKULUM DAN HAL EHWAL MURID</h2>
+                    <p class="text-sm text-slate-600 mt-1">
+                        <strong>PERNYATAAN STANDARD:</strong> Bidang kurikulum, kokurikulum dan hal ehwal murid diurus secara cekap dan berkesan untuk melahirkan murid yang seimbang daripada segi intelek, rohani, emosi, jasmani dan sosial selaras dengan hala tuju sekolah.
+                    </p>
+                </div>
+
+                <!-- Maklumat Penilai Form -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Nama Pegawai / Guru <span class="text-red-500">*</span></label>
+                        <input type="text" id="user-name" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Masukkan nama penuh">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Jawatan / Panitia <span class="text-red-500">*</span></label>
+                        <input type="text" id="user-role" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Contoh: KP Bahasa Melayu">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Tarikh Penilaian <span class="text-red-500">*</span></label>
+                        <input type="date" id="user-date" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questionnaire Container -->
+            <form id="skpm-form" onsubmit="handleFormSubmit(event)" class="space-y-8">
+                
+                <!-- Dynamic Items Inserted Here -->
+                <div id="questions-container" class="space-y-8"></div>
+
+                <!-- Submit Bar -->
+                <div class="sticky bottom-4 bg-white/90 backdrop-blur border border-slate-200 p-4 rounded-2xl shadow-xl flex flex-col sm:flex-row justify-between items-center gap-4 no-print">
+                    <div class="text-sm text-slate-600">
+                        Pastikan semua soalan telah dijawab sebelum menghantar.
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="reset" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-100 transition-all">
+                            Reset
+                        </button>
+                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium shadow-lg shadow-indigo-200 transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> Hantar Penilaian
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- SECTION 2: GOOGLE SHEETS SIMULATION (ADMIN ACCESS) -->
+        <div id="section-sheets" class="hidden space-y-6">
+            
+            <!-- Admin Lock Prompt -->
+            <div id="admin-auth-card" class="max-w-md mx-auto my-12 bg-white p-8 rounded-2xl shadow-lg border border-slate-200 text-center space-y-4">
+                <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto text-2xl">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">Akses Admin Sahaja</h3>
+                    <p class="text-sm text-slate-500 mt-1">Sila masukkan kata kunci keselamatan untuk melihat kutipan data Google Sheets dan lembaran penilaian individu.</p>
+                </div>
+                <div class="space-y-3">
+                    <input type="password" id="admin-pass-input" class="w-full px-4 py-2.5 border border-slate-300 rounded-xl text-center text-lg tracking-widest focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Kata Kunci Admin">
+                    <p id="auth-error-msg" class="text-xs text-red-500 hidden font-medium">Kata kunci tidak sah! (Kata kunci laluan: admin123)</p>
+                    <button onclick="verifyAdminPass()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium shadow-md transition-all">
+                        Lolos Masuk
+                    </button>
+                </div>
+            </div>
+
+            <!-- Protected Data Dashboard -->
+            <div id="admin-dashboard" class="hidden space-y-6">
+                
+                <!-- Admin Header & Actions -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-1 rounded-full">Kutipan Live Data</span>
+                            <span class="text-xs text-slate-400">Pautan Google Sheets</span>
+                        </div>
+                        <h2 class="text-xl font-bold text-slate-900 mt-1">Pangkalan Data Jawapan Individu</h2>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="exportToCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-xl shadow-sm transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-file-excel"></i> Eksport Ke CSV/Excel
+                        </button>
+                        <button onclick="lockAdmin()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-lock"></i> Kunci Portal
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Google Sheets UI Table Container -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-100 border-b border-slate-200 px-4 py-3 flex justify-between items-center text-xs font-mono text-slate-600">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-file-spreadsheet text-emerald-600 text-base"></i>
+                            <span>KUTIPAN_DATA_SKPM_KURIKULUM.XLSX</span>
+                        </div>
+                        <div id="record-count" class="font-semibold text-slate-700">0 Rekod Ditemui</div>
+                    </div>
+                    
+                    <div class="overflow-x-auto max-h-[500px]">
+                        <table class="w-full text-xs text-left border-collapse">
+                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold sticky top-0 border-b border-slate-200 shadow-sm">
+                                <tr>
+                                    <th class="p-3 border-r border-slate-200 w-12 text-center">#</th>
+                                    <th class="p-3 border-r border-slate-200 min-w-[150px]">Tarikh / Masa</th>
+                                    <th class="p-3 border-r border-slate-200 min-w-[180px]">Nama Pegawai</th>
+                                    <th class="p-3 border-r border-slate-200 min-w-[150px]">Panitia / Jawatan</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.1.1(a)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.1.1(b)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.1.1(c)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.1.1(d)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.1(a)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.1(b)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.1(c)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.1(d)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.1(e)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.1(f)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.2(a)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.2(b)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.2(c)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.2(d)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.3(a)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.3(b)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.3(c)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.3(d)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.4(a)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.4(b)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.4(c)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.2.4(d)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.3.1(a)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.3.1(b)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.3.1(c)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.3.1(d)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.4.1(a)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.4.1(b)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.4.1(c)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.4.1(d)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center">3.1.4.1(e)</th>
+                                    <th class="p-3 border-r border-slate-200 text-center font-bold text-indigo-700">Jumlah Skor</th>
+                                    <th class="p-3 border-r border-slate-200 text-center font-bold text-indigo-700">% Peratus</th>
+                                    <th class="p-3 text-center min-w-[120px]">Tindakan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sheets-data-rows" class="divide-y divide-slate-200 bg-white font-mono">
+                                <!-- Data rows injected dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Individual Record Viewer / Print Modal (Injected on demand) -->
+                <div id="individual-view-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+                    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative space-y-6">
+                        <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 no-print">
+                            <i class="fa-solid fa-xmark text-xl"></i>
+                        </button>
+                        
+                        <div id="printable-individual-report">
+                            <!-- Injected Individual Data Form/Sheet -->
+                        </div>
+
+                        <div class="flex justify-end gap-3 border-t border-slate-100 pt-4 no-print">
+                            <button onclick="closeModal()" class="px-4 py-2 border border-slate-300 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-100">
+                                Tutup
+                            </button>
+                            <button onclick="window.print()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-medium shadow flex items-center gap-2">
+                                <i class="fa-solid fa-print"></i> Cetak Lembaran Individu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 no-print">
+        <p>© SKPM Kualiti@Sekolah - Standard 3.1 Pengurusan Kurikulum. Data Sistem Dihubungkan Secara Maya Ke Pangkalan Google Sheets.</p>
+    </footer>
+
+    <script>
+        // DATA STRUCTURE: Complete PDF Raw Questionnaire Dataset
+        const skpmData = [
+            {
+                aspect: "ASPEK 3.1.1: KETETAPAN PELAKSANAAN KURIKULUM",
+                critical_criteria: "Ketetapan dibuat untuk memastikan kepatuhan dan keselarasan pelaksanaan kurikulum kebangsaan.",
+                code: "3.1.1.1",
+                standard_kualiti: "Pelaksanaan kurikulum diurus secara sistematik dan terancang.",
+                tindakan_mencapai: "Membuat, mendokumen, menyebar luas dan menyemak semula ketetapan dengan mematuhi arahan yang berkuat kuasa dan mematuhi prosedur, mengikut keperluan dan kesesuaian sekolah, secara menyeluruh, spesifik, dan jelas.",
+                items: [
+                    {
+                        id: "3.1.1.1_a",
+                        tindakan: "a) Membuat ketetapan",
+                        rubrik: {
+                            4: "i. dengan mematuhi arahan yang berkuat kuasa\nii. secara menyeluruh dalam semua perkara seperti penubuhan panitia mata pelajaran, peruntukan kewangan, pentaksiran, penjaminan kualiti (pembudayaan 4P), latihan/tugasan, pembelajaran digital, *PdPR/remote learning, sumber pendidikan, dan jadual waktu\niii. mengikut keperluan sekolah\niv. secara spesifik",
+                            3: "dengan mengambil kira perkara (i) dan mana-mana dua (2) perkara",
+                            2: "dengan mengambil kira perkara (i) dan mana-mana satu (1) perkara",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii) atau (iv)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.1.1_b",
+                        tindakan: "b) Mendokumenkan ketetapan",
+                        rubrik: {
+                            4: "i. dengan mematuhi prosedur\nii. secara menyeluruh dalam semua perkara seperti penubuhan panitia mata pelajaran, peruntukan kewangan, pentaksiran, penjaminan kualiti (pembudayaan 4P), latihan/tugasan, pembelajaran digital, *PdPR/remote learning, sumber pendidikan, dan jadual waktu\niii. mengikut keperluan sekolah\niv. secara jelas",
+                            3: "dengan mengambil kira perkara (i) dan mana-mana dua (2) perkara",
+                            2: "dengan mengambil kira perkara (i) dan mana-mana satu (1) perkara",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii) atau (iv)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.1.1_c",
+                        tindakan: "c) Menyebarluaskan ketetapan",
+                        rubrik: {
+                            4: "i. dengan mematuhi arahan yang berkuat kuasa\nii. secara menyeluruh dalam semua perkara seperti penubuhan panitia mata pelajaran, peruntukan kewangan, pentaksiran, penjaminan kualiti (pembudayaan 4P), latihan/tugasan, pembelajaran digital, *PdPR/remote learning, sumber pendidikan, dan jadual waktu\niii. mengikut kesesuaian sekolah\niv. secara jelas",
+                            3: "dengan mengambil kira perkara (i) dan mana-mana dua (2) perkara",
+                            2: "dengan mengambil kira perkara (i) dan mana-mana satu (1) perkara",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii) atau (iv)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.1.1_d",
+                        tindakan: "d) Menyemak semula ketetapan",
+                        rubrik: {
+                            4: "i. dengan mematuhi arahan yang berkuat kuasa\nii. secara menyeluruh dalam semua perkara seperti penubuhan panitia mata pelajaran, peruntukan kewangan, pentaksiran, penjaminan kualiti (pembudayaan 4P), latihan/tugasan, pembelajaran digital, *PdPR/remote learning, sumber pendidikan, dan jadual waktu\niii. mengikut kesesuaian sekolah\niv. secara jelas",
+                            3: "dengan mengambil kira perkara (i) dan mana-mana dua (2) perkara",
+                            2: "dengan mengambil kira perkara (i) dan mana-mana satu (1) perkara",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii) atau (iv)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    }
+                ]
+            },
+            {
+                aspect: "ASPEK 3.1.2: PENGURUSAN MATA PELAJARAN",
+                critical_criteria: "Mata pelajaran diurus untuk meningkatkan kualiti pengajaran dan pembelajaran.",
+                code: "3.1.2.1",
+                standard_kualiti: "Pelaksanaan mata pelajaran diurus secara profesional dan terancang.",
+                tindakan_mencapai: "Memperoleh dokumen kurikulum, menyelaras penyediaan RPT dan RPH, pentaksiran, tugasan, menganalisis data dan mengambil tindakan susulan dengan mematuhi arahan yang berkuat kuasa, berdasarkan keperluan, kesesuaian, dan secara menyeluruh.",
+                items: [
+                    {
+                        id: "3.1.2.1_a",
+                        tindakan: "a) Memperoleh dokumen kurikulum",
+                        rubrik: {
+                            4: "i. dengan mematuhi arahan yang berkuat kuasa\nii. berdasarkan keperluan pelaksanaan kurikulum\niii. secara menyeluruh meliputi semua tahun/tingkatan",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (i)",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.1_b",
+                        tindakan: "b) Menyelaras penyediaan RPT dan RPH",
+                        rubrik: {
+                            4: "i. dengan mematuhi arahan yang berkuat kuasa\nii. berdasarkan kesesuaian pelaksanaan kurikulum\niii. secara menyeluruh meliputi semua tahun/tingkatan",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (i)",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.1_c",
+                        tindakan: "c) Menyelaras pentaksiran",
+                        rubrik: {
+                            4: "i. dengan mematuhi arahan yang berkuat kuasa\nii. berdasarkan keperluan pelaksanaan kurikulum\niii. secara menyeluruh meliputi semua tahun/tingkatan",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (i)",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.1_d",
+                        tindakan: "d) Menyelaras tugasan murid",
+                        rubrik: {
+                            4: "i. dengan mematuhi ketetapan kurikulum\nii. berdasarkan kesesuaian pelaksanaan kurikulum\niii. secara menyeluruh meliputi semua tahun/tingkatan",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (i)",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.1_e",
+                        tindakan: "e) Menganalisis data dan maklumat pentaksiran",
+                        rubrik: {
+                            4: "i. dengan mematuhi arahan yang berkuat kuasa\nii. berdasarkan kesesuaian pelaksanaan kurikulum\niii. secara menyeluruh meliputi semua tahun/tingkatan",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (i)",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.1_f",
+                        tindakan: "f) Mengambil tindakan susulan",
+                        rubrik: {
+                            4: "i. dengan mematuhi arahan yang berkuat kuasa\nii. berdasarkan kesesuaian pelaksanaan kurikulum\niii. secara menyeluruh meliputi semua tahun/tingkatan",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (i)",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    }
+                ]
+            },
+            {
+                aspect: "ASPEK 3.1.2: PENGURUSAN MATA PELAJARAN",
+                critical_criteria: "Mata pelajaran diurus untuk meningkatkan kualiti pengajaran dan pembelajaran.",
+                code: "3.1.2.2",
+                standard_kualiti: "Program peningkatan kualiti pengajaran guru diurus secara terancang.",
+                tindakan_mencapai: "Merancang dan melaksanakan program pembangunan profesionalisme yang berkaitan dengan mata pelajaran, menilai keberkesanan program dan mengambil tindakan susulan dengan berfokus kepada keperluan guru/panitia, mengambil kira perkembangan pendidikan semasa, secara objektif dan dari semasa ke semasa.",
+                items: [
+                    {
+                        id: "3.1.2.2_a",
+                        tindakan: "a) Merancang program pembangunan profesionalisme yang berkaitan dengan mata pelajaran",
+                        rubrik: {
+                            4: "i. dengan berfokus kepada keperluan guru/panitia\nii. dengan mengambil kira perkembangan pendidikan semasa\niii. dari semasa ke semasa",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (ii) dan (iii)",
+                            1: "dengan mengambil kira mana-mana satu (1) perkara",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.2_b",
+                        tindakan: "b) Melaksanakan program pembangunan profesionalisme yang berkaitan dengan mata pelajaran",
+                        rubrik: {
+                            4: "i. dengan berfokus kepada keperluan guru/panitia\nii. dengan mengambil kira perkembangan pendidikan semasa\niii. dari semasa ke semasa",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (ii) dan (iii)",
+                            1: "dengan mengambil kira mana-mana satu (1) perkara",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.2_c",
+                        tindakan: "c) Menilai keberkesanan program",
+                        rubrik: {
+                            4: "i. dengan berfokus kepada keperluan guru/panitia\nii. dengan mengambil kira perkembangan pendidikan semasa\niii. dari semasa ke semasa",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (ii) dan (iii)",
+                            1: "dengan mengambil kira mana-mana satu (1) perkara",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.2_d",
+                        tindakan: "d) Mengambil tindakan susulan",
+                        rubrik: {
+                            4: "i. dengan berfokus kepada keperluan guru/panitia\nii. secara objektif\niii. dari semasa ke semasa",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (ii) dan (iii)",
+                            1: "dengan mengambil kira mana-mana satu (1) perkara",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    }
+                ]
+            },
+            {
+                aspect: "ASPEK 3.1.2: PENGURUSAN MATA PELAJARAN",
+                critical_criteria: "Mata pelajaran diurus untuk meningkatkan kualiti pengajaran dan pembelajaran.",
+                code: "3.1.2.3",
+                standard_kualiti: "Program peningkatan pencapaian murid diurus secara profesional dan terancang.",
+                tindakan_mencapai: "Merancang dan melaksanakan program yang menjurus ke arah peningkatan ilmu dan kemahiran, menilai keberkesanan program dan mengambil tindakan susulan dengan berfokus kepada keperluan murid, mengambil kira tahap keupayaan dan potensi murid, secara menyeluruh, dan dari semasa ke semasa.",
+                items: [
+                    {
+                        id: "3.1.2.3_a",
+                        tindakan: "a) Merancang program yang menjurus ke arah peningkatan ilmu dan kemahiran",
+                        rubrik: {
+                            4: "i. dengan berfokus kepada keperluan murid\nii. dengan mengambil kira tahap keupayaan dan potensi murid\niii. dengan melibatkan murid di semua tahun/tingkatan\niv. dari semasa ke semasa",
+                            3: "dengan mengambil kira mana-mana tiga (3) perkara",
+                            2: "dengan mengambil kira mana-mana dua (2) perkara",
+                            1: "dengan mengambil kira mana-mana satu (1) perkara",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.3_b",
+                        tindakan: "b) Melaksanakan program yang menjurus ke arah peningkatan ilmu dan kemahiran",
+                        rubrik: {
+                            4: "i. dengan berfokus kepada keperluan murid\nii. dengan mengambil kira tahap keupayaan dan potensi murid\niii. dengan melibatkan murid di semua tahun/tingkatan\niv. dari semasa ke semasa",
+                            3: "dengan mengambil kira mana-mana tiga (3) perkara",
+                            2: "dengan mengambil kira mana-mana dua (2) perkara",
+                            1: "dengan mengambil kira mana-mana satu (1) perkara",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.3_c",
+                        tindakan: "c) Menilai keberkesanan program",
+                        rubrik: {
+                            4: "i. dengan berfokus kepada keperluan murid\nii. dengan mengambil kira tahap keupayaan dan potensi murid\niii. secara menyeluruh\niv. dari semasa ke semasa",
+                            3: "dengan mengambil kira mana-mana tiga (3) perkara",
+                            2: "dengan mengambil kira mana-mana dua (2) perkara",
+                            1: "dengan mengambil kira mana-mana satu (1) perkara",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.3_d",
+                        tindakan: "d) Mengambil tindakan susulan",
+                        rubrik: {
+                            4: "i. dengan berfokus kepada keperluan murid\nii. dengan mengambil kira tahap keupayaan dan potensi murid\niii. secara menyeluruh\niv. dari semasa ke semasa",
+                            3: "dengan mengambil kira mana-mana tiga (3) perkara",
+                            2: "dengan mengambil kira mana-mana dua (2) perkara",
+                            1: "dengan mengambil kira mana-mana satu (1) perkara",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    }
+                ]
+            },
+            {
+                aspect: "ASPEK 3.1.2: PENGURUSAN MATA PELAJARAN",
+                critical_criteria: "Mata pelajaran diurus untuk meningkatkan kualiti pengajaran dan pembelajaran.",
+                code: "3.1.2.4",
+                standard_kualiti: "Bantuan geran per kapita mata pelajaran dimanfaatkan secara sistematik dan terancang.",
+                tindakan_mencapai: "Merancang dan melaksanakan perbelanjaan, memanfaatkan sumber pendidikan dan merekodkan penerimaan serta penggunaan sumber pendidikan mengikut prosedur yang ditetapkan, keperluan, kesesuaian, secara menyeluruh, optimum, dan dari semasa ke semasa.",
+                items: [
+                    {
+                        id: "3.1.2.4_a",
+                        tindakan: "a) Merancang perbelanjaan",
+                        rubrik: {
+                            4: "i. mengikut prosedur yang ditetapkan\nii. mengikut keperluan\niii. secara menyeluruh\niv. dari semasa ke semasa",
+                            3: "dengan mengambil kira perkara (i) dan mana-mana dua (2) perkara",
+                            2: "dengan mengambil kira perkara (i) dan mana-mana satu (1) perkara",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii) atau (iv)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.4_b",
+                        tindakan: "b) Melaksanakan perbelanjaan",
+                        rubrik: {
+                            4: "i. mengikut prosedur yang ditetapkan\nii. mengikut kesesuaian\niii. secara optimum\niv. dari semasa ke semasa",
+                            3: "dengan mengambil kira perkara (i) dan mana-mana dua (2) perkara",
+                            2: "dengan mengambil kira perkara (i) dan mana-mana satu (1) perkara",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii) atau (iv)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.4_c",
+                        tindakan: "c) Memanfaatkan sumber pendidikan",
+                        rubrik: {
+                            4: "i. mengikut prosedur yang ditetapkan\nii. mengikut kesesuaian\niii. secara optimum\niv. dari semasa ke semasa",
+                            3: "dengan mengambil kira perkara (i) dan mana-mana dua (2) perkara",
+                            2: "dengan mengambil kira perkara (i) dan mana-mana satu (1) perkara",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii) atau (iv)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.2.4_d",
+                        tindakan: "d) Merekodkan penerimaan dan penggunaan sumber pendidikan",
+                        rubrik: {
+                            4: "i. mengikut prosedur yang ditetapkan\nii. mengikut kesesuaian\niii. secara menyeluruh\niv. dari semasa ke semasa",
+                            3: "dengan mengambil kira perkara (i) dan mana-mana dua (2) perkara",
+                            2: "dengan mengambil kira perkara (i) dan mana-mana satu (1) perkara",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii) atau (iv)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    }
+                ]
+            },
+            {
+                aspect: "ASPEK 3.1.3: PENGURUSAN MASA INSTRUKSIONAL",
+                critical_criteria: "Masa instruksional diurus untuk memastikan peningkatan masa pembelajaran berkesan.",
+                code: "3.1.3.1",
+                standard_kualiti: "Masa pelaksanaan PdP diurus secara sistematik dan terancang.",
+                tindakan_mencapai: "Menyediakan pelbagai jadual waktu, melaksanakan PdP seperti yang dijadualkan, menyusun semula jadual waktu dan menyelaras program sekolah mengikut arahan yang berkuat kuasa, ketetapan kurikulum, dan kesesuaian.",
+                items: [
+                    {
+                        id: "3.1.3.1_a",
+                        tindakan: "a) Menyediakan jadual waktu induk, jadual waktu kelas, jadual waktu guru, jadual waktu guru ganti dan jadual penggunaan bilik khas",
+                        rubrik: {
+                            4: "i. dengan mematuhi arahan yang berkuat kuasa\nii. mengikut ketetapan kurikulum\niii. mengikut kesesuaian",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (i)",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.3.1_b",
+                        tindakan: "b) Melaksanakan PdP seperti yang dijadualkan",
+                        rubrik: {
+                            4: "i. dengan mematuhi arahan yang berkuat kuasa\nii. mengikut ketetapan kurikulum\niii. mengikut kesesuaian",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (i)",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.3.1_c",
+                        tindakan: "c) Menyusun semula jadual waktu",
+                        rubrik: {
+                            4: "i. dengan mematuhi arahan yang berkuat kuasa\nii. mengikut ketetapan kurikulum\niii. mengikut kesesuaian",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (i)",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.3.1_d",
+                        tindakan: "d) Menyelaras program sekolah",
+                        rubrik: {
+                            4: "i. dengan mematuhi arahan yang berkuat kuasa\nii. mengikut ketetapan kurikulum\niii. mengikut kesesuaian",
+                            3: "dengan mengambil kira perkara (i) dan (ii) atau perkara (i) dan (iii)",
+                            2: "dengan mengambil kira perkara (i)",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    }
+                ]
+            },
+            {
+                aspect: "ASPEK 3.1.4: PENGURUSAN PENILAIAN MURID",
+                critical_criteria: "Penilaian murid diurus untuk mengesan kemajuan penguasaan dan pencapaian murid.",
+                code: "3.1.4.1",
+                standard_kualiti: "Peperiksaan dan pentaksiran diurus secara sistematik dan terancang.",
+                tindakan_mencapai: "Merancang, menyelaras dan melaksanakan peperiksaan dan pentaksiran, menganalisis data dan maklumat serta mengambil tindakan susulan mengikut arahan yang berkuat kuasa, ketetapan, keperluan, kesesuaian, secara menyeluruh, dan dari semasa ke semasa.",
+                items: [
+                    {
+                        id: "3.1.4.1_a",
+                        tindakan: "a) Merancang peperiksaan dan pentaksiran",
+                        rubrik: {
+                            4: "i. mengikut arahan yang berkuat kuasa\nii. mengikut keperluan\niii. secara menyeluruh meliputi semua mata pelajaran dan murid\niv. dari semasa ke semasa",
+                            3: "dengan mengambil kira perkara (i) dan mana-mana dua (2) perkara",
+                            2: "dengan mengambil kira perkara (i) dan mana-mana satu (1) perkara",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii) atau (iv)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.4.1_b",
+                        tindakan: "b) Menyelaras peperiksaan dan pentaksiran",
+                        rubrik: {
+                            4: "i. mengikut ketetapan\nii. mengikut kesesuaian\niii. secara menyeluruh meliputi semua mata pelajaran dan murid\niv. dari semasa ke semasa",
+                            3: "dengan mengambil kira perkara (i) dan mana-mana dua (2) perkara",
+                            2: "dengan mengambil kira perkara (i) dan mana-mana satu (1) perkara",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii) atau (iv)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.4.1_c",
+                        tindakan: "c) Melaksanakan peperiksaan dan pentaksiran",
+                        rubrik: {
+                            4: "i. mengikut ketetapan / arahan berkuat kuasa\nii. mengikut kesesuaian\niii. secara menyeluruh meliputi semua mata pelajaran dan murid\niv. dari semasa ke semasa",
+                            3: "dengan mengambil kira perkara (i) dan mana-mana dua (2) perkara",
+                            2: "dengan mengambil kira perkara (i) dan mana-mana satu (1) perkara",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii) atau (iv)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.4.1_d",
+                        tindakan: "d) Menganalisis data dan maklumat peperiksaan dan pentaksiran",
+                        rubrik: {
+                            4: "i. mengikut arahan yang berkuat kuasa\nii. mengikut kesesuaian\niii. secara menyeluruh meliputi semua mata pelajaran dan murid\niv. dari semasa ke semasa",
+                            3: "dengan mengambil kira perkara (i) dan mana-mana dua (2) perkara",
+                            2: "dengan mengambil kira perkara (i) dan mana-mana satu (1) perkara",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii) atau (iv)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    },
+                    {
+                        id: "3.1.4.1_e",
+                        tindakan: "e) Mengambil tindakan susulan/intervensi",
+                        rubrik: {
+                            4: "i. mengikut arahan yang berkuat kuasa\nii. mengikut kesesuaian\niii. secara menyeluruh meliputi semua mata pelajaran dan murid\niv. dari semasa ke semasa",
+                            3: "dengan mengambil kira perkara (i) dan mana-mana dua (2) perkara",
+                            2: "dengan mengambil kira perkara (i) dan mana-mana satu (1) perkara",
+                            1: "dengan mengambil kira mana-mana perkara (ii) atau (iii) atau (iv)",
+                            0: "tidak mengambil kira mana-mana perkara"
+                        }
+                    }
+                ]
+            }
+        ];
+
+        // State Management
+        let submissions = [];
+        let isAdminAuthenticated = false;
+        const ADMIN_PIN = "admin123";
+
+        // Initialization
+        window.onload = function() {
+            renderFormQuestions();
+            
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('user-date').value = today;
+
+            // Load saved mock submissions if any
+            const savedData = localStorage.getItem('skpm_submissions');
+            if (savedData) {
+                submissions = JSON.parse(savedData);
+            } else {
+                // Seed demo data for admin view
+                seedDemoData();
+            }
+        };
+
+        // Render SKPM Standard Questions
+        function renderFormQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            skpmData.forEach((section, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6";
+
+                let itemsHtml = '';
+                section.items.forEach(item => {
+                    itemsHtml += `
+                        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/50 hover:bg-white transition-all space-y-4">
+                            <div class="font-semibold text-slate-800 text-sm md:text-base border-b border-slate-200 pb-2 flex items-start gap-2">
+                                <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded font-mono">${item.id}</span>
+                                <span>${item.tindakan}</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                                ${[4, 3, 2, 1, 0].map(score => `
+                                    <label class="cursor-pointer border border-slate-200 rounded-lg p-3 bg-white hover:border-indigo-400 hover:shadow-sm transition-all flex flex-col justify-between">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="font-bold text-sm ${score === 4 ? 'text-emerald-600' : score === 0 ? 'text-rose-600' : 'text-indigo-600'}">Skor ${score}</span>
+                                            <input type="radio" name="${item.id}" value="${score}" required class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 border-slate-300">
+                                        </div>
+                                        <p class="text-xs text-slate-600 whitespace-pre-line leading-relaxed">${item.rubrik[score]}</p>
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="border-b border-indigo-100 pb-3">
+                        <span class="text-xs font-bold text-indigo-600 tracking-wider uppercase">${section.aspect}</span>
+                        <h3 class="text-lg font-bold text-slate-900 mt-0.5">${section.code} ${section.standard_kualiti}</h3>
+                        <p class="text-xs text-slate-500 mt-1"><strong>Kriteria Kritikal:</strong> ${section.critical_criteria}</p>
+                        <p class="text-xs text-indigo-900 mt-1 bg-indigo-50 p-2 rounded-lg border border-indigo-100"><strong>Tindakan Untuk Mencapai Standard:</strong> ${section.tindakan_mencapai}</p>
+                    </div>
+                    <div class="space-y-4">
+                        ${itemsHtml}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // Tab Switching
+        function switchTab(tab) {
+            const formTab = document.getElementById('nav-form');
+            const sheetsTab = document.getElementById('nav-sheets');
+            const formSec = document.getElementById('section-form');
+            const sheetsSec = document.getElementById('section-sheets');
+
+            if (tab === 'form') {
+                formTab.className = "px-4 py-2 rounded-lg text-white bg-indigo-700 shadow-sm transition-all flex items-center gap-2";
+                sheetsTab.className = "px-4 py-2 rounded-lg text-indigo-200 hover:text-white hover:bg-indigo-800/50 transition-all flex items-center gap-2";
+                formSec.classList.remove('hidden');
+                sheetsSec.classList.add('hidden');
+            } else {
+                sheetsTab.className = "px-4 py-2 rounded-lg text-white bg-indigo-700 shadow-sm transition-all flex items-center gap-2";
+                formTab.className = "px-4 py-2 rounded-lg text-indigo-200 hover:text-white hover:bg-indigo-800/50 transition-all flex items-center gap-2";
+                sheetsSec.classList.remove('hidden');
+                formSec.classList.add('hidden');
+
+                if (isAdminAuthenticated) {
+                    renderSheetsTable();
+                }
+            }
+        }
+
+        // Handle Form Submission
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('user-name').value.trim();
+            const role = document.getElementById('user-role').value.trim();
+            const date = document.getElementById('user-date').value;
+
+            if (!name || !role || !date) {
+                alert("Sila lengkapkan maklumat Nama, Jawatan/Panitia dan Tarikh Penilaian.");
+                return;
+            }
+
+            // Extract all answers
+            const answers = {};
+            let totalScore = 0;
+            const totalItems = 31; // Total sub-items in Standard 3.1
+            const maxScore = totalItems * 4;
+
+            skpmData.forEach(section => {
+                section.items.forEach(item => {
+                    const selected = document.querySelector(`input[name="${item.id}"]:checked`);
+                    const score = selected ? parseInt(selected.value) : 0;
+                    answers[item.id] = score;
+                    totalScore += score;
+                });
+            });
+
+            const percentage = ((totalScore / maxScore) * 100).toFixed(2);
+
+            const submission = {
+                id: "SUB-" + Date.now(),
+                timestamp: new Date().toLocaleString('ms-MY'),
+                name,
+                role,
+                date,
+                answers,
+                totalScore,
+                maxScore,
+                percentage
+            };
+
+            submissions.unshift(submission);
+            localStorage.setItem('skpm_submissions', JSON.stringify(submissions));
+
+            alert(`Terima kasih, ${name}! Penilaian anda telah berjaya disimpan dan dihantar secara automatik ke Pangkalan Data Google Sheets.`);
+            
+            // Reset form
+            document.getElementById('skpm-form').reset();
+            document.getElementById('user-date').value = new Date().toISOString().split('T')[0];
+
+            // Switch to Sheets to view if admin or notify
+            switchTab('sheets');
+        }
+
+        // Admin Verification
+        function verifyAdminPass() {
+            const pass = document.getElementById('admin-pass-input').value;
+            const errorMsg = document.getElementById('auth-error-msg');
+
+            if (pass === ADMIN_PIN) {
+                isAdminAuthenticated = true;
+                errorMsg.classList.add('hidden');
+                document.getElementById('admin-auth-card').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                renderSheetsTable();
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        function lockAdmin() {
+            isAdminAuthenticated = false;
+            document.getElementById('admin-pass-input').value = '';
+            document.getElementById('admin-auth-card').classList.remove('hidden');
+            document.getElementById('admin-dashboard').classList.add('hidden');
+        }
+
+        // Render Google Sheets Table
+        function renderSheetsTable() {
+            const tbody = document.getElementById('sheets-data-rows');
+            document.getElementById('record-count').innerText = `${submissions.length} Rekod Ditemui`;
+
+            if (submissions.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="38" class="p-8 text-center text-slate-400">Tiada rekod penilaian ditemui. Sila isi borang penilaian terlebih dahulu.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = submissions.map((sub, i) => {
+                const answerCols = [
+                    '3.1.1.1_a', '3.1.1.1_b', '3.1.1.1_c', '3.1.1.1_d',
+                    '3.1.2.1_a', '3.1.2.1_b', '3.1.2.1_c', '3.1.2.1_d', '3.1.2.1_e', '3.1.2.1_f',
+                    '3.1.2.2_a', '3.1.2.2_b', '3.1.2.2_c', '3.1.2.2_d',
+                    '3.1.2.3_a', '3.1.2.3_b', '3.1.2.3_c', '3.1.2.3_d',
+                    '3.1.2.4_a', '3.1.2.4_b', '3.1.2.4_c', '3.1.2.4_d',
+                    '3.1.3.1_a', '3.1.3.1_b', '3.1.3.1_c', '3.1.3.1_d',
+                    '3.1.4.1_a', '3.1.4.1_b', '3.1.4.1_c', '3.1.4.1_d', '3.1.4.1_e'
+                ].map(key => `<td class="p-3 border-r border-slate-200 text-center font-bold ${sub.answers[key] === 4 ? 'text-emerald-600 bg-emerald-50/30' : ''}">${sub.answers[key] ?? 0}</td>`).join('');
+
+                return `
+                    <tr class="hover:bg-indigo-50/40 transition-all">
+                        <td class="p-3 border-r border-slate-200 text-center text-slate-400">${i + 1}</td>
+                        <td class="p-3 border-r border-slate-200 whitespace-nowrap">${sub.timestamp}</td>
+                        <td class="p-3 border-r border-slate-200 font-semibold text-slate-800 whitespace-nowrap">${sub.name}</td>
+                        <td class="p-3 border-r border-slate-200 text-slate-600 whitespace-nowrap">${sub.role}</td>
+                        ${answerCols}
+                        <td class="p-3 border-r border-slate-200 text-center font-bold text-indigo-700 bg-indigo-50/50">${sub.totalScore}/${sub.maxScore}</td>
+                        <td class="p-3 border-r border-slate-200 text-center font-bold text-emerald-600 bg-emerald-50/50">${sub.percentage}%</td>
+                        <td class="p-3 text-center">
+                            <button onclick="viewIndividualRecord('${sub.id}')" class="px-2.5 py-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 rounded-md font-sans text-xs font-medium transition-all">
+                                <i class="fa-solid fa-eye"></i> Papar / Cetak
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // View Individual Record in Printable Form Sheet Format
+        function viewIndividualRecord(id) {
+            const sub = submissions.find(s => s.id === id);
+            if (!sub) return;
+
+            const modal = document.getElementById('individual-view-modal');
+            const reportContainer = document.getElementById('printable-individual-report');
+
+            let sectionsHtml = '';
+
+            skpmData.forEach(sec => {
+                let itemsRows = '';
+                sec.items.forEach(item => {
+                    const score = sub.answers[item.id] ?? 0;
+                    itemsRows += `
+                        <tr class="border-b border-slate-200 text-xs">
+                            <td class="p-2 border-r border-slate-200 font-medium text-slate-800">${item.tindakan}</td>
+                            <td class="p-2 border-r border-slate-200 text-center font-bold ${score === 4 ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-50'}">${score === 4 ? '✓ (4)' : ''}</td>
+                            <td class="p-2 border-r border-slate-200 text-center font-bold ${score === 3 ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-50'}">${score === 3 ? '✓ (3)' : ''}</td>
+                            <td class="p-2 border-r border-slate-200 text-center font-bold ${score === 2 ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-50'}">${score === 2 ? '✓ (2)' : ''}</td>
+                            <td class="p-2 border-r border-slate-200 text-center font-bold ${score === 1 ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-50'}">${score === 1 ? '✓ (1)' : ''}</td>
+                            <td class="p-2 text-center font-bold ${score === 0 ? 'bg-rose-100 text-rose-800' : 'bg-slate-50'}">${score === 0 ? '✓ (0)' : ''}</td>
+                        </tr>
+                    `;
+                });
+
+                sectionsHtml += `
+                    <div class="mb-6 border border-slate-300 rounded-lg overflow-hidden">
+                        <div class="bg-slate-100 p-2.5 border-b border-slate-300 text-xs font-bold text-slate-800">
+                            ${sec.aspect} | ${sec.code} ${sec.standard_kualiti}
+                        </div>
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-[10px] text-slate-500 uppercase border-b border-slate-200">
+                                    <th class="p-2 border-r border-slate-200">Tindakan / Sub-Kriteria</th>
+                                    <th class="p-2 border-r border-slate-200 text-center w-12">4</th>
+                                    <th class="p-2 border-r border-slate-200 text-center w-12">3</th>
+                                    <th class="p-2 border-r border-slate-200 text-center w-12">2</th>
+                                    <th class="p-2 border-r border-slate-200 text-center w-12">1</th>
+                                    <th class="p-2 text-center w-12">0</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsRows}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
+
+            reportContainer.innerHTML = `
+                <div class="space-y-4 font-sans">
+                    <div class="text-center border-b border-slate-200 pb-4">
+                        <h2 class="text-lg font-bold uppercase tracking-wide">SKPM Kualiti@Sekolah</h2>
+                        <h3 class="text-md font-semibold text-indigo-900">LEMBARAN JAWAPAN PENILAIAN INDIVIDU</h3>
+                        <p class="text-xs text-slate-500">STANDARD 3.1: PENGURUSAN KURIKULUM</p>
+                    </div>
+
+                    <!-- Individual Info Header Table -->
+                    <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+                        <div>
+                            <p class="text-slate-500">NAMA PEGAWAI / PENILAI:</p>
+                            <p class="font-bold text-slate-900 text-sm">${sub.name}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500">PANITIA / JAWATAN:</p>
+                            <p class="font-bold text-slate-900 text-sm">${sub.role}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500">TARIKH PENILAIAN:</p>
+                            <p class="font-medium text-slate-800">${sub.date}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500">JUMLAH SKOR / PERATUS:</p>
+                            <p class="font-bold text-indigo-700 text-sm">${sub.totalScore} / ${sub.maxScore} (${sub.percentage}%)</p>
+                        </div>
+                    </div>
+
+                    <!-- Replicated Score Sheets -->
+                    <div class="mt-4">
+                        ${sectionsHtml}
+                    </div>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('individual-view-modal').classList.add('hidden');
+        }
+
+        // CSV Export Functionality
+        function exportToCSV() {
+            if (submissions.length === 0) {
+                alert("Tiada data untuk dieksport.");
+                return;
+            }
+
+            const headers = [
+                "ID", "Masa", "Nama Pegawai", "Panitia / Jawatan", "Tarikh Penilaian",
+                '3.1.1.1(a)', '3.1.1.1(b)', '3.1.1.1(c)', '3.1.1.1(d)',
+                '3.1.2.1(a)', '3.1.2.1(b)', '3.1.2.1(c)', '3.1.2.1(d)', '3.1.2.1(e)', '3.1.2.1(f)',
+                '3.1.2.2(a)', '3.1.2.2(b)', '3.1.2.2(c)', '3.1.2.2(d)',
+                '3.1.2.3(a)', '3.1.2.3(b)', '3.1.2.3(c)', '3.1.2.3(d)',
+                '3.1.2.4(a)', '3.1.2.4(b)', '3.1.2.4(c)', '3.1.2.4(d)',
+                '3.1.3.1(a)', '3.1.3.1(b)', '3.1.3.1(c)', '3.1.3.1(d)',
+                '3.1.4.1(a)', '3.1.4.1(b)', '3.1.4.1(c)', '3.1.4.1(d)', '3.1.4.1(e)',
+                "Jumlah Skor", "Peratus (%)"
+            ];
+
+            const rows = submissions.map(sub => [
+                `"${sub.id}"`,
+                `"${sub.timestamp}"`,
+                `"${sub.name}"`,
+                `"${sub.role}"`,
+                `"${sub.date}"`,
+                sub.answers['3.1.1.1_a'] ?? 0, sub.answers['3.1.1.1_b'] ?? 0, sub.answers['3.1.1.1_c'] ?? 0, sub.answers['3.1.1.1_d'] ?? 0,
+                sub.answers['3.1.2.1_a'] ?? 0, sub.answers['3.1.2.1_b'] ?? 0, sub.answers['3.1.2.1_c'] ?? 0, sub.answers['3.1.2.1_d'] ?? 0, sub.answers['3.1.2.1_e'] ?? 0, sub.answers['3.1.2.1_f'] ?? 0,
+                sub.answers['3.1.2.2_a'] ?? 0, sub.answers['3.1.2.2_b'] ?? 0, sub.answers['3.1.2.2_c'] ?? 0, sub.answers['3.1.2.2_d'] ?? 0,
+                sub.answers['3.1.2.3_a'] ?? 0, sub.answers['3.1.2.3_b'] ?? 0, sub.answers['3.1.2.3_c'] ?? 0, sub.answers['3.1.2.3_d'] ?? 0,
+                sub.answers['3.1.2.4_a'] ?? 0, sub.answers['3.1.2.4_b'] ?? 0, sub.answers['3.1.2.4_c'] ?? 0, sub.answers['3.1.2.4_d'] ?? 0,
+                sub.answers['3.1.3.1_a'] ?? 0, sub.answers['3.1.3.1_b'] ?? 0, sub.answers['3.1.3.1_c'] ?? 0, sub.answers['3.1.3.1_d'] ?? 0,
+                sub.answers['3.1.4.1_a'] ?? 0, sub.answers['3.1.4.1_b'] ?? 0, sub.answers['3.1.4.1_c'] ?? 0, sub.answers['3.1.4.1_d'] ?? 0, sub.answers['3.1.4.1_e'] ?? 0,
+                sub.totalScore,
+                `"${sub.percentage}%"`
+            ]);
+
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `KUTIPAN_DATA_SKPM_3.1_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Seed Mock Data
+        function seedDemoData() {
+            const demoNames = ["Ahmad Bin Razali", "Siti Nurhaliza Binti Mohamad", "Tan Wei Lun"];
+            const demoRoles = ["KP Bahasa Melayu", "KP Sains", "KP Matematik"];
+            
+            submissions = demoNames.map((name, i) => {
+                const answers = {};
+                let scoreSum = 0;
+
+                skpmData.forEach(sec => {
+                    sec.items.forEach(item => {
+                        const val = Math.floor(Math.random() * 2) + 3; // scores 3 or 4
+                        answers[item.id] = val;
+                        scoreSum += val;
+                    });
+                });
+
+                return {
+                    id: "SUB-DEMO-" + (i + 1),
+                    timestamp: new Date(Date.now() - i * 86400000).toLocaleString('ms-MY'),
+                    name,
+                    role: demoRoles[i],
+                    date: new Date().toISOString().split('T')[0],
+                    answers,
+                    totalScore: scoreSum,
+                    maxScore: 124,
+                    percentage: ((scoreSum / 124) * 100).toFixed(2)
+                };
+            });
+
+            localStorage.setItem('skpm_submissions', JSON.stringify(submissions));
+        }
+    </script>
+</body>
+</html>
